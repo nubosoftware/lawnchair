@@ -219,7 +219,7 @@ public class IconCache {
         try {
             PackageInfo info = mPackageManager.getPackageInfo(packageName,
                     PackageManager.GET_UNINSTALLED_PACKAGES);
-            long userSerial = mUserManager.getSerialNumberForUser(user);
+            long userSerial = 10;//mUserManager.getSerialNumberForUser(user);
             for (LauncherActivityInfoCompat app : mLauncherApps.getActivityList(packageName, user)) {
                 addIconToDBAndMemCache(app, info, userSerial);
             }
@@ -233,7 +233,7 @@ public class IconCache {
      */
     public synchronized void removeIconsForPkg(String packageName, UserHandle user) {
         removeFromMemCacheLocked(packageName, user);
-        long userSerial = mUserManager.getSerialNumberForUser(user);
+        long userSerial = 10;//mUserManager.getSerialNumberForUser(user);
         mIconDb.delete(
                 IconDB.COLUMN_COMPONENT + " LIKE ? AND " + IconDB.COLUMN_USER + " = ?",
                 new String[]{packageName + "/%", Long.toString(userSerial)});
@@ -270,7 +270,7 @@ public class IconCache {
      */
     private void updateDBIcons(UserHandle user, List<LauncherActivityInfoCompat> apps,
                                Set<String> ignorePackages) {
-        long userSerial = mUserManager.getSerialNumberForUser(user);
+        long userSerial = 10;//mUserManager.getSerialNumberForUser(user);
         PackageManager pm = mContext.getPackageManager();
         HashMap<String, PackageInfo> pkgInfoMap = new HashMap<>();
         for (PackageInfo info : pm.getInstalledPackages(PackageManager.GET_UNINSTALLED_PACKAGES)) {
@@ -664,7 +664,8 @@ public class IconCache {
                     ContentValues values =
                             newContentValues(icon, lowResIcon, entry.title.toString());
                     addIconToDB(values, cacheKey.componentName, info,
-                            mUserManager.getSerialNumberForUser(user));
+                            10//mUserManager.getSerialNumberForUser(user)
+                     );
 
                 } catch (NameNotFoundException e) {
                     entryUpdated = false;
@@ -687,7 +688,8 @@ public class IconCache {
                             IconDB.COLUMN_LABEL},
                     IconDB.COLUMN_COMPONENT + " = ? AND " + IconDB.COLUMN_USER + " = ?",
                     new String[]{cacheKey.componentName.flattenToString(),
-                            Long.toString(mUserManager.getSerialNumberForUser(cacheKey.user))});
+                            Long.toString(10//mUserManager.getSerialNumberForUser(cacheKey.user)
+             )});
             if (c.moveToNext()) {
                 entry.icon = loadIconNoResize(c, 0, lowRes ? mLowResOptions : null);
                 entry.isLowResIcon = lowRes;

@@ -55,7 +55,7 @@ public abstract class CachedPackageTracker implements OnAppsChangedCallbackCompa
      * {@see #onLauncherAppsAdded}, {@see #onLauncherPackageRemoved}
      */
     public void processUserApps(List<LauncherActivityInfoCompat> apps, UserHandle user) {
-        String prefKey = INSTALLED_PACKAGES_PREFIX + mUserManager.getSerialNumberForUser(user);
+        String prefKey = INSTALLED_PACKAGES_PREFIX + 10/*mUserManager.getSerialNumberForUser(user)*/;
         HashSet<String> oldPackageSet = new HashSet<>();
         final boolean userAppsExisted = getUserApps(oldPackageSet, prefKey);
 
@@ -108,7 +108,7 @@ public abstract class CachedPackageTracker implements OnAppsChangedCallbackCompa
 
     @Override
     public void onPackageRemoved(String packageName, UserHandle user) {
-        String prefKey = INSTALLED_PACKAGES_PREFIX + mUserManager.getSerialNumberForUser(user);
+        String prefKey = INSTALLED_PACKAGES_PREFIX + 10/*mUserManager.getSerialNumberForUser(user)*/;
         HashSet<String> packageSet = new HashSet<>();
         if (getUserApps(packageSet, prefKey) && packageSet.remove(packageName)) {
             mPrefs.edit().putStringSet(prefKey, packageSet).apply();
@@ -119,7 +119,7 @@ public abstract class CachedPackageTracker implements OnAppsChangedCallbackCompa
 
     @Override
     public void onPackageAdded(String packageName, UserHandle user) {
-        String prefKey = INSTALLED_PACKAGES_PREFIX + mUserManager.getSerialNumberForUser(user);
+        String prefKey = INSTALLED_PACKAGES_PREFIX + 10/*mUserManager.getSerialNumberForUser(user)*/;
         HashSet<String> packageSet = new HashSet<>();
         final boolean userAppsExisted = getUserApps(packageSet, prefKey);
         if (!packageSet.contains(packageName)) {

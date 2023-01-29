@@ -622,8 +622,9 @@ public class LauncherProvider extends ContentProvider {
         }
 
         public long getDefaultUserSerial() {
-            return UserManagerCompat.getInstance(mContext).getSerialNumberForUser(
-                    Utilities.myUserHandle());
+            return 10;
+//            return UserManagerCompat.getInstance(mContext).getSerialNumberForUser(
+//                    Utilities.myUserHandle());
         }
 
         private void addFavoritesTable(SQLiteDatabase db, boolean optional) {

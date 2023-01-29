@@ -52,7 +52,7 @@ public class UserManagerCompatVL extends UserManagerCompat {
             List<UserHandle> users = mUserManager.getUserProfiles();
             if (users != null) {
                 for (UserHandle user : users) {
-                    long serial = mUserManager.getSerialNumberForUser(user);
+                    long serial = 10;//mUserManager.getSerialNumberForUser(user);
                     mUsers.put(serial, user);
                     mUserToSerialMap.put(user, serial);
                 }
@@ -131,7 +131,7 @@ public class UserManagerCompatVL extends UserManagerCompat {
                 return serial == null ? 0 : serial;
             }
         }
-        return mUserManager.getSerialNumberForUser(user);
+        return 10;//mUserManager.getSerialNumberForUser(user);
     }
 }
 

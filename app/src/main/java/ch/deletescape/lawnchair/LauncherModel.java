@@ -959,6 +959,7 @@ public class LauncherModel extends BroadcastReceiver
                 .getLong(LauncherSettings.Settings.EXTRA_VALUE);
 
         values.put(LauncherSettings.Favorites._ID, item.id);
+        Log.e(TAG, "addItemToDatabase: " + item.id+", values: " + values+", CONTENT_URI: " + LauncherSettings.Favorites.CONTENT_URI);
 
         final StackTraceElement[] stackTrace = new Throwable().getStackTrace();
         Runnable r = new Runnable() {
@@ -1656,14 +1657,15 @@ public class LauncherModel extends BroadcastReceiver
         // check & update map of what's occupied; used to discard overlapping/invalid items
         private boolean checkItemPlacement(LongArrayMap<GridOccupancy> occupied, ItemInfo item,
                                            ArrayList<Long> workspaceScreens) {
-            LauncherAppState app = LauncherAppState.getInstance();
-            InvariantDeviceProfile profile = app.getInvariantDeviceProfile();
+            try {
+                LauncherAppState app = LauncherAppState.getInstance();
+                InvariantDeviceProfile profile = app.getInvariantDeviceProfile();
 
-            long containerIndex = item.screenId;
-            if (item.container == LauncherSettings.Favorites.CONTAINER_HOTSEAT) {
+                long containerIndex = item.screenId;
+                if (item.container == LauncherSettings.Favorites.CONTAINER_HOTSEAT) {
 
-                final GridOccupancy hotseatOccupancy =
-                        occupied.get((long) LauncherSettings.Favorites.CONTAINER_HOTSEAT);
+                    final GridOccupancy hotseatOccupancy =
+                            occupied.get((long) LauncherSettings.Favorites.CONTAINER_HOTSEAT);
 
                 /*if (item.screenId >= profile.numHotseatIcons) {
                     Log.e(TAG, "Error loading shortcut " + item
@@ -1673,67 +1675,74 @@ public class LauncherModel extends BroadcastReceiver
                     return false;
                 }*/
 
-                if (hotseatOccupancy != null) {
-                    int hotseatSize = hotseatOccupancy.cells.length;
-                    int hotseatX = (int) (item.screenId % hotseatSize);
-                    int hotseatY = (int) (item.screenId / hotseatSize);
-                    if (hotseatOccupancy.cells[hotseatX][hotseatY]) {
-                        Log.e(TAG, "Error loading shortcut into hotseat " + item
-                                + " into position (" + item.screenId + ":" + item.cellX + ","
-                                + item.cellY + ") already occupied");
-                        return false;
+                    if (hotseatOccupancy != null) {
+                        int hotseatSize = hotseatOccupancy.cells.length;
+                        int hotseatX = (int) (item.screenId % hotseatSize);
+                        int hotseatY = (int) (item.screenId / hotseatSize);
+                        if (hotseatOccupancy.cells[hotseatX][hotseatY]) {
+                            Log.e(TAG, "Error loading shortcut into hotseat " + item
+                                    + " into position (" + item.screenId + ":" + item.cellX + ","
+                                    + item.cellY + ") already occupied");
+                            return false;
+                        } else {
+                            hotseatOccupancy.cells[hotseatX][hotseatY] = true;
+                            return true;
+                        }
                     } else {
-                        hotseatOccupancy.cells[hotseatX][hotseatY] = true;
+                        final GridOccupancy occupancy = new GridOccupancy(profile.numHotseatIcons, Utilities.getNumberOfHotseatRows(mContext));
+                        occupancy.cells[(int) item.screenId][item.cellY] = true;
+                        occupied.put((long) LauncherSettings.Favorites.CONTAINER_HOTSEAT, occupancy);
                         return true;
                     }
+                } else if (item.container == LauncherSettings.Favorites.CONTAINER_DESKTOP) {
+                    if (!workspaceScreens.contains(item.screenId)) {
+                        // The item has an invalid screen id.
+                        return false;
+                    }
                 } else {
-                    final GridOccupancy occupancy = new GridOccupancy(profile.numHotseatIcons, Utilities.getNumberOfHotseatRows(mContext));
-                    occupancy.cells[(int) item.screenId][item.cellY] = true;
-                    occupied.put((long) LauncherSettings.Favorites.CONTAINER_HOTSEAT, occupancy);
+                    // Skip further checking if it is not the hotseat or workspace container
                     return true;
                 }
-            } else if (item.container == LauncherSettings.Favorites.CONTAINER_DESKTOP) {
-                if (!workspaceScreens.contains(item.screenId)) {
-                    // The item has an invalid screen id.
+
+                final int countX = profile.numColumns;
+                final int countY = profile.numRows;
+                if (item.container == LauncherSettings.Favorites.CONTAINER_DESKTOP &&
+                        item.cellX < 0 || item.cellY < 0 ||
+                        item.cellX + item.spanX > countX || item.cellY + item.spanY > countY) {
+                    Log.e(TAG, "Error loading shortcut " + item
+                            + " into cell (" + containerIndex + "-" + item.screenId + ":"
+                            + item.cellX + "," + item.cellY
+                            + ") out of screen bounds ( " + countX + "x" + countY + ")");
                     return false;
                 }
-            } else {
-                // Skip further checking if it is not the hotseat or workspace container
-                return true;
-            }
 
-            final int countX = profile.numColumns;
-            final int countY = profile.numRows;
-            if (item.container == LauncherSettings.Favorites.CONTAINER_DESKTOP &&
-                    item.cellX < 0 || item.cellY < 0 ||
-                    item.cellX + item.spanX > countX || item.cellY + item.spanY > countY) {
-                Log.e(TAG, "Error loading shortcut " + item
-                        + " into cell (" + containerIndex + "-" + item.screenId + ":"
-                        + item.cellX + "," + item.cellY
-                        + ") out of screen bounds ( " + countX + "x" + countY + ")");
-                return false;
-            }
-
-            if (!occupied.containsKey(item.screenId)) {
-                GridOccupancy screen = new GridOccupancy(countX + 1, countY + 1);
-                if (item.screenId == Workspace.FIRST_SCREEN_ID) {
-                    // Mark the first row as occupied (if the feature is enabled)
-                    // in order to account for the QSB.
-                    screen.markCells(0, 0, countX + 1, 1, Utilities.getPrefs(mContext).getShowPixelBar());
+                if (!occupied.containsKey(item.screenId)) {
+                    GridOccupancy screen = new GridOccupancy(countX + 1, countY + 1);
+                    if (item.screenId == Workspace.FIRST_SCREEN_ID) {
+                        // Mark the first row as occupied (if the feature is enabled)
+                        // in order to account for the QSB.
+                        screen.markCells(0, 0, countX + 1, 1, Utilities.getPrefs(mContext).getShowPixelBar());
+                    }
+                    occupied.put(item.screenId, screen);
                 }
-                occupied.put(item.screenId, screen);
-            }
-            final GridOccupancy occupancy = occupied.get(item.screenId);
+                final GridOccupancy occupancy = occupied.get(item.screenId);
 
-            // Check if any workspace icons overlap with each other
-            if (occupancy.isRegionVacant(item.cellX, item.cellY, item.spanX, item.spanY)) {
-                occupancy.markCells(item, true);
-                return true;
-            } else {
+                // Check if any workspace icons overlap with each other
+                if (occupancy.isRegionVacant(item.cellX, item.cellY, item.spanX, item.spanY)) {
+                    occupancy.markCells(item, true);
+                    return true;
+                } else {
+                    Log.e(TAG, "Error loading shortcut " + item
+                            + " into cell (" + containerIndex + "-" + item.screenId + ":"
+                            + item.cellX + "," + item.cellX + "," + item.spanX + "," + item.spanY
+                            + ") already occupied");
+                    return false;
+                }
+            } catch (Exception e) {
                 Log.e(TAG, "Error loading shortcut " + item
-                        + " into cell (" + containerIndex + "-" + item.screenId + ":"
+                        + " into cell ("+item.screenId + ":"
                         + item.cellX + "," + item.cellX + "," + item.spanX + "," + item.spanY
-                        + ") already occupied");
+                        + "). Exception: " + e);
                 return false;
             }
         }
@@ -1834,7 +1843,8 @@ public class LauncherModel extends BroadcastReceiver
                     final LongSparseArray<Boolean> quietMode = new LongSparseArray<>();
                     final LongSparseArray<Boolean> unlockedUsers = new LongSparseArray<>();
                     for (UserHandle user : mUserManager.getUserProfiles()) {
-                        long serialNo = mUserManager.getSerialNumberForUser(user);
+                        Log.e(TAG, "loadWorkspace: user = " + user+", serialNumber = "+mUserManager.getSerialNumberForUser(user));
+                        long serialNo = 10;//mUserManager.getSerialNumberForUser(user);
                         allUsers.put(serialNo, user);
                         quietMode.put(serialNo, mUserManager.isQuietModeEnabled(user));
 

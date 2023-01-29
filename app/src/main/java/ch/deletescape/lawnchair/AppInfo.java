@@ -160,7 +160,7 @@ public class AppInfo extends ItemInfoWithIcon implements EditableItemInfo {
 
     public static Intent makeLaunchIntent(Context context, LauncherActivityInfoCompat info,
                                           UserHandle user) {
-        long serialNumber = UserManagerCompat.getInstance(context).getSerialNumberForUser(user);
+        long serialNumber = 10;//UserManagerCompat.getInstance(context).getSerialNumberForUser(user);
         return new Intent(Intent.ACTION_MAIN)
                 .addCategory(Intent.CATEGORY_LAUNCHER)
                 .setComponent(info.getComponentName())

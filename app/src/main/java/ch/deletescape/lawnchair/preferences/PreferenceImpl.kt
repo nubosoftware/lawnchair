@@ -5,6 +5,7 @@ import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
 import android.graphics.Color
+import android.util.Log
 import android.view.View
 import ch.deletescape.lawnchair.BuildConfig
 import ch.deletescape.lawnchair.Launcher
@@ -444,6 +445,7 @@ open class PreferenceImpl(context: Context) : IPreferenceProvider {
                 oldFile.renameTo(newFile)
                 oldFile.delete()
             }
+            Log.e("NUBO: SharedPrefs", "getSharedPrefs: " + newFile.absolutePath)
             return context.applicationContext.getSharedPreferences(LauncherFiles.SHARED_PREFERENCES_KEY, Context.MODE_PRIVATE)
         }
     }

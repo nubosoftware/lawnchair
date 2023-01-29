@@ -141,7 +141,7 @@ public class WidgetPreviewLoader {
     void writeToDb(WidgetCacheKey key, long[] versions, Bitmap preview) {
         ContentValues values = new ContentValues();
         values.put(CacheDb.COLUMN_COMPONENT, key.componentName.flattenToShortString());
-        values.put(CacheDb.COLUMN_USER, mUserManager.getSerialNumberForUser(key.user));
+        values.put(CacheDb.COLUMN_USER, 10/*mUserManager.getSerialNumberForUser(key.user)*/);
         values.put(CacheDb.COLUMN_SIZE, key.size);
         values.put(CacheDb.COLUMN_PACKAGE, key.componentName.getPackageName());
         values.put(CacheDb.COLUMN_VERSION, versions[0]);
@@ -151,7 +151,7 @@ public class WidgetPreviewLoader {
     }
 
     public void removePackage(String packageName, UserHandle user) {
-        removePackage(packageName, mUserManager.getSerialNumberForUser(user));
+        removePackage(packageName, 10/*mUserManager.getSerialNumberForUser(user)*/);
     }
 
     private void removePackage(String packageName, long userSerial) {
@@ -174,7 +174,7 @@ public class WidgetPreviewLoader {
         LongSparseArray<HashSet<String>> validPackages = new LongSparseArray<>();
 
         for (ComponentKey key : list) {
-            final long userId = mUserManager.getSerialNumberForUser(key.user);
+            final long userId = 10;//mUserManager.getSerialNumberForUser(key.user);
             HashSet<String> packages = validPackages.get(userId);
             if (packages == null) {
                 packages = new HashSet<>();
@@ -242,7 +242,7 @@ public class WidgetPreviewLoader {
                             + CacheDb.COLUMN_SIZE + " = ?",
                     new String[]{
                             key.componentName.flattenToString(),
-                            Long.toString(mUserManager.getSerialNumberForUser(key.user)),
+                            Long.toString(10/*mUserManager.getSerialNumberForUser(key.user)*/),
                             key.size
                     });
             // If cancelled, skip getting the blob and decoding it into a bitmap

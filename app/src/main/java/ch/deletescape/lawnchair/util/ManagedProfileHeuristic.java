@@ -136,7 +136,7 @@ public class ManagedProfileHeuristic {
                 return;
             }
             // Try to get a work folder.
-            String folderIdKey = USER_FOLDER_ID_PREFIX + mUserManager.getSerialNumberForUser(user);
+            String folderIdKey = USER_FOLDER_ID_PREFIX + 10/*mUserManager.getSerialNumberForUser(user)*/;
             if (mPrefs.contains(folderIdKey)) {
                 long folderId = mPrefs.getLong(folderIdKey, 0);
                 final FolderInfo workFolder = mModel.findFolderById(folderId);
@@ -205,7 +205,7 @@ public class ManagedProfileHeuristic {
         UserManagerCompat userManager = UserManagerCompat.getInstance(context);
         HashSet<String> validKeys = new HashSet<>();
         for (UserHandle user : users) {
-            addAllUserKeys(userManager.getSerialNumberForUser(user), validKeys);
+            addAllUserKeys(10/*userManager.getSerialNumberForUser(user)*/, validKeys);
         }
 
         SharedPreferences prefs = context.getSharedPreferences(

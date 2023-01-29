@@ -284,7 +284,7 @@
   <string name="pixel_ui_pref_title">Tema</string>
   <string name="behavior_pref_title">Comportament</string>
   <string name="debug_pref_title">Depuració</string>
-  <string name="general_pref_summary">Personalitzeu l\'escriptori</string>
+  <string name="general_pref_summary">Personalitzeu lescriptori</string>
   <string name="dock_pref_summary">Personalitzeu la barra d\'aplicacions</string>
   <string name="app_drawer_pref_summary">Personalitzeu el calaix de d\'aplicacions</string>
   <string name="pixel_ui_pref_summary">Personalitza diferents elements</string>
@@ -372,7 +372,7 @@
   <string name="pref_applyBlur">Aplica el difuminat a</string>
   <string name="search_bar">Barra de cerca</string>
   <string name="folder">Carpeta</string>
-  <string name="dock_allapps"><![CDATA[Barra d'aplicacions i calaix]]></string>
+  <string name="dock_allapps"><![CDATA[Barra daplicacions i calaix]]></string>
   <string name="app_shortcuts">Draceres d\'aplicació</string>
   <string name="blur_effect">Efecte difuminat</string>
   <string name="pref_weather_provider">Proveïdor del temps</string>

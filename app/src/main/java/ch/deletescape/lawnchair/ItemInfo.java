@@ -172,7 +172,7 @@ public class ItemInfo {
      */
     void onAddToDatabase(Context context, ContentValues values) {
         writeToValues(values);
-        long serialNumber = UserManagerCompat.getInstance(context).getSerialNumberForUser(user);
+        long serialNumber = 10;//UserManagerCompat.getInstance(context).getSerialNumberForUser(user);
         values.put(LauncherSettings.Favorites.PROFILE_ID, serialNumber);
 
         if (screenId == Workspace.EXTRA_EMPTY_SCREEN_ID) {

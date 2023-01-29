@@ -70,8 +70,8 @@ public class ShortcutInfoCompat {
     }
 
     public Intent makeIntent(Context context) {
-        long serialNumber = UserManagerCompat.getInstance(context)
-                .getSerialNumberForUser(getUserHandle());
+        long serialNumber = 10l/*UserManagerCompat.getInstance(context)
+                .getSerialNumberForUser(getUserHandle())*/;
         Intent intent;
         if (useNative()) {
             intent = new Intent(Intent.ACTION_MAIN);

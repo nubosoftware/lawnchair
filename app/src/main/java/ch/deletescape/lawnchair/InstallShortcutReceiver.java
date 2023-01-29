@@ -342,8 +342,8 @@ public class InstallShortcutReceiver extends BroadcastReceiver {
                             .object()
                             .key(LAUNCH_INTENT_KEY).value(launchIntent.toUri(0))
                             .key(APP_SHORTCUT_TYPE_KEY).value(true)
-                            .key(USER_HANDLE_KEY).value(UserManagerCompat.getInstance(mContext)
-                                    .getSerialNumberForUser(user))
+                            .key(USER_HANDLE_KEY).value(10/*(UserManagerCompat.getInstance(mContext)
+                                    .getSerialNumberForUser(user)*/)
                             .endObject().toString();
                 } catch (JSONException e) {
                     Log.d(TAG, "Exception when adding shortcut: " + e);
@@ -355,8 +355,8 @@ public class InstallShortcutReceiver extends BroadcastReceiver {
                             .object()
                             .key(LAUNCH_INTENT_KEY).value(launchIntent.toUri(0))
                             .key(DEEPSHORTCUT_TYPE_KEY).value(true)
-                            .key(USER_HANDLE_KEY).value(UserManagerCompat.getInstance(mContext)
-                                    .getSerialNumberForUser(user))
+                            .key(USER_HANDLE_KEY).value(10/*UserManagerCompat.getInstance(mContext)
+                                    .getSerialNumberForUser(user)*/)
                             .endObject().toString();
                 } catch (JSONException e) {
                     Log.d(TAG, "Exception when adding shortcut: " + e);
@@ -370,8 +370,8 @@ public class InstallShortcutReceiver extends BroadcastReceiver {
                             .object()
                             .key(LAUNCH_INTENT_KEY).value(launchIntent.toUri(0))
                             .key(APP_WIDGET_TYPE_KEY).value(true)
-                            .key(USER_HANDLE_KEY).value(UserManagerCompat.getInstance(mContext)
-                                    .getSerialNumberForUser(user))
+                            .key(USER_HANDLE_KEY).value(10/*UserManagerCompat.getInstance(mContext)
+                                    .getSerialNumberForUser(user)*/)
                             .endObject().toString();
                 } catch (JSONException e) {
                     Log.d(TAG, "Exception when adding shortcut: " + e);
